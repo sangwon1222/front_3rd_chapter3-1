@@ -374,6 +374,7 @@ describe('일정 뷰', () => {
 });
 
 describe('검색 기능', () => {
+  // eslint-disable-next-line no-unused-vars
   let queryEvent: {
     current: {
       fetchEvents: ReturnType<typeof useFetchEvents>;

@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { Event, EventForm } from '../types';
 
 const dateRegexCheck = (date: string) => {

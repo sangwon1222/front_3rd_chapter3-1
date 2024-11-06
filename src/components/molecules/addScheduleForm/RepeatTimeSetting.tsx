@@ -21,7 +21,7 @@ export const RepeatTimeSetting: React.FC = () => {
     const { startTimeError, endTimeError } = getTimeErrorMessage(startTime, endTime);
     setStartTimeError(startTimeError ?? '');
     setEndTimeError(endTimeError ?? '');
-  }, [startTime, endTime]);
+  }, [startTime, endTime, setStartTimeError, setEndTimeError]);
 
   const handleStartTime = useCallback((v: string) => setStartTime(v), [setStartTime]);
   const handleEndTime = useCallback((v: string) => setEndTime(v), [setEndTime]);
