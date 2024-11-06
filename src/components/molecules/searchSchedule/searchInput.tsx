@@ -6,6 +6,7 @@ export const SearchInput: React.FC = () => {
   const { searchTerm, setSearchTerm } = useSearch();
   return (
     <InputWithLabel
+      data-testid="search-schedule"
       label="일정 검색"
       value={searchTerm}
       onChange={setSearchTerm}

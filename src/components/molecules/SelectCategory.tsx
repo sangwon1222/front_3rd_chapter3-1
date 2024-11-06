@@ -9,6 +9,7 @@ export const SelectCategory = () => {
 
   return (
     <SelectWithLabel
+      data-testid="schedule-category"
       label="카테고리"
       value={category}
       onChange={(e) => setCategory(e as string)}

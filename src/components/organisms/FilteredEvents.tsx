@@ -12,9 +12,10 @@ export const FilteredEvents = () => {
   const { notifiedEvents } = useNotifications();
 
   const { deleteEvent } = useDeleteEvent();
-
   const setForm = useScheduleForm((state) => state.setForm);
+
   const setEditingForm = useCallback((event: Event) => setForm(event), [setForm]);
+
   return (
     <>
       {filteredEvents.length === 0 ? (

@@ -6,5 +6,12 @@ export const RepeatDescription: React.FC = () => {
   const description = useScheduleForm((state) => state.description);
   const setDescription = useScheduleForm((state) => state.setDescription);
 
-  return <InputWithLabel label="설명" value={description} onChange={setDescription} />;
+  return (
+    <InputWithLabel
+      data-testid="schedule-description"
+      label="설명"
+      value={description}
+      onChange={setDescription}
+    />
+  );
 };

@@ -14,11 +14,12 @@ export const CheckBoxWithLabel: React.FC<PropsType> = ({
   checkBoxLabel,
   isChecked,
   onChange,
+  ...rest
 }) => {
   return (
     <FormControl>
       <FormLabel>{label}</FormLabel>
-      <Checkbox isChecked={isChecked} onChange={onChange}>
+      <Checkbox isChecked={isChecked} onChange={onChange} {...rest}>
         {checkBoxLabel}
       </Checkbox>
     </FormControl>

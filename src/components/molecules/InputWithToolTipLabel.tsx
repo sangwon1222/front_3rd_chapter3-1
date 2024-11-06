@@ -10,6 +10,7 @@ interface PropsType extends Omit<InputProps, 'onChange'> {
   onBlur?: React.FocusEventHandler<HTMLInputElement>;
   toolTipLabel: string;
   toolTipIsOpen: boolean;
+  placement?: 'top' | 'bottom';
 }
 
 export const InputWithToolTipLabel: React.FC<PropsType> = ({
@@ -20,12 +21,18 @@ export const InputWithToolTipLabel: React.FC<PropsType> = ({
   onBlur,
   toolTipLabel,
   toolTipIsOpen,
+  placement,
   ...rest
 }) => {
   return (
     <FormControl>
       <FormLabel>{label}</FormLabel>
-      <Tooltip label={toolTipLabel} isOpen={toolTipIsOpen} placement="top">
+      <Tooltip
+        label={toolTipLabel}
+        isOpen={toolTipIsOpen}
+        placement={placement ? placement : 'top'}
+        shouldWrapChildren
+      >
         <Input type={type} value={value} onChange={onChange} {...rest} onBlur={onBlur} />
       </Tooltip>
     </FormControl>

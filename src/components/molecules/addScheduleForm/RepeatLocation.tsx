@@ -7,5 +7,12 @@ export const RepeatLocation: React.FC = () => {
   const location = useScheduleForm((state) => state.location);
   const setLocation = useScheduleForm((state) => state.setLocation);
 
-  return <InputWithLabel label="위치" value={location} onChange={setLocation} />;
+  return (
+    <InputWithLabel
+      data-testid="schedule-location"
+      label="위치"
+      value={location}
+      onChange={setLocation}
+    />
+  );
 };

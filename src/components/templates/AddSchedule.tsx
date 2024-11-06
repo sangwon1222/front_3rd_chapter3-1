@@ -14,7 +14,7 @@ import React from 'react';
 
 export const AddSchedule: React.FC = () => {
   return (
-    <VStack w="400px" spacing={5} align="stretch">
+    <VStack w="400px" spacing={5} align="stretch" data-testid="edit-schedule">
       {/* 일정 수정 / 추가 Heading */}
       <EditingEventHeading />
       {/* 제목 */}

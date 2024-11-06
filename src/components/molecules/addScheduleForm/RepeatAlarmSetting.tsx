@@ -9,6 +9,7 @@ export const RepeatAlarmSetting: React.FC = () => {
 
   return (
     <SelectWithLabel
+      data-testid="schedule-notification-time"
       label="알림 설정"
       value={notificationTime}
       onChange={(v) => setNotificationTime(Number(v))}

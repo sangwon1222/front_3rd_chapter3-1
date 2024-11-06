@@ -5,9 +5,16 @@ import React from 'react';
 export const Notification: React.FC = () => {
   const { notifications, deleteNotification } = useNotifications();
 
-  if (notifications && notifications.length === 0) return;
+  if (notifications.length === 0) return;
   return (
-    <VStack position="fixed" top={4} right={4} spacing={2} align="flex-end">
+    <VStack
+      position="fixed"
+      top={4}
+      right={4}
+      spacing={2}
+      align="flex-end"
+      data-testid="notification-alert"
+    >
       {notifications.map((notification, index) => (
         <Alert key={index} status="info" variant="solid" width="auto">
           <AlertIcon />

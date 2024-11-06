@@ -56,11 +56,13 @@ export const Schedule: React.FC<PropsType> = ({
         </VStack>
         <HStack>
           <IconButton
+            data-testid={`event-edit-${event.id}`}
             aria-label="Edit event"
             icon={<EditIcon />}
             onClick={() => editEvent(event)}
           />
           <IconButton
+            data-testid={`event-delete-${event.id}`}
             aria-label="Delete event"
             icon={<DeleteIcon />}
             onClick={() => deleteEvent(event.id)}

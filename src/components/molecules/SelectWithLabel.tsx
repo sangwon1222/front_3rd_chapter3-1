@@ -15,11 +15,12 @@ export const SelectWithLabel: React.FC<SelectWithInputProps> = ({
   label,
   onChange,
   options,
+  ...rest
 }) => {
   return (
     <FormControl>
       <FormLabel>{label}</FormLabel>
-      <Select value={value} onChange={onChange}>
+      <Select value={value} onChange={onChange} {...rest}>
         {options.map((option, index) => (
           <option key={`${index}-${option.value}`} value={option.value}>
             {option.label}

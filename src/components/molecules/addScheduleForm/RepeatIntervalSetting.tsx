@@ -10,6 +10,7 @@ export const RepeatIntervalSetting: React.FC = () => {
 
   return (
     <InputWithLabel
+      data-testid="schedule-interval"
       type="number"
       label="반복 간격"
       value={repeat.interval}

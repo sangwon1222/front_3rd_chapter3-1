@@ -1,7 +1,6 @@
+import { InputWithLabel } from '@molecules/InputWithLabel';
 import useScheduleForm from '@stores/useScheduleForm';
 import { useCallback } from 'react';
-
-import { InputWithLabel } from '../InputWithLabel';
 
 export const NewScheduleTitle = () => {
   const title = useScheduleForm((state) => state.title);
@@ -9,5 +8,12 @@ export const NewScheduleTitle = () => {
 
   const handleChange = useCallback((value: string) => setTitle(value), [setTitle]);
 
-  return <InputWithLabel label="제목" value={title} onChange={handleChange} />;
+  return (
+    <InputWithLabel
+      data-testid="schedule-title"
+      label="제목"
+      value={title}
+      onChange={handleChange}
+    />
+  );
 };

@@ -10,52 +10,29 @@ import {
 } from '@chakra-ui/react';
 import React, { useRef } from 'react';
 
-import { useEventForm } from '../../hooks/useEventForm';
-import { Event } from '../../types';
+import { useDialogContext } from '@/context/useDialog';
+import { useSaveEvent } from '@/hooks/useSaveEvent';
 
-type PropsType = {
-  isOverlapDialogOpen: boolean;
-  setIsOverlapDialogOpen: (v: boolean) => void;
-};
-export const AlertDuplicateSchedule: React.FC<PropsType> = ({
-  isOverlapDialogOpen,
-  setIsOverlapDialogOpen,
-}) => {
-  const {
-    title,
-    date,
-    startTime,
-    endTime,
-    description,
-    location,
-    category,
-    isRepeating,
-    repeatType,
-    repeatInterval,
-    repeatEndDate,
-    notificationTime,
-    editingEvent,
-  } = useEventForm();
+export const AlertDuplicateSchedule: React.FC = () => {
+  const { dialogName, setDialogName, overlapEvents, setOverlapEvents } = useDialogContext();
   const cancelRef = useRef<HTMLButtonElement>(null);
 
-  const saveEvent = (e: any) => console.log('save event', e);
-
-  const overlappingEvents = [] as Event[];
+  const { isEditing, createSchedule, updateSchedule } = useSaveEvent();
   return (
     <AlertDialog
-      isOpen={isOverlapDialogOpen}
+      isOpen={dialogName === 'overlappingEvents'}
       leastDestructiveRef={cancelRef}
-      onClose={() => setIsOverlapDialogOpen(false)}
+      onClose={() => setDialogName('')}
     >
       <AlertDialogOverlay>
         <AlertDialogContent>
-          <AlertDialogHeader fontSize="lg" fontWeight="bold">
+          <AlertDialogHeader fontSize="lg" fontWeight="bold" data-testid="alert-dialog-header">
             일정 겹침 경고
           </AlertDialogHeader>
 
           <AlertDialogBody>
             다음 일정과 겹칩니다:
-            {overlappingEvents.map((event) => (
+            {overlapEvents.map((event) => (
               <Text key={event.id}>
                 {event.title} ({event.date} {event.startTime}-{event.endTime})
               </Text>
@@ -64,29 +41,15 @@ export const AlertDuplicateSchedule: React.FC<PropsType> = ({
           </AlertDialogBody>
 
           <AlertDialogFooter>
-            <Button ref={cancelRef} onClick={() => setIsOverlapDialogOpen(false)}>
+            <Button ref={cancelRef} onClick={() => setDialogName('')}>
               취소
             </Button>
             <Button
               colorScheme="red"
               onClick={() => {
-                setIsOverlapDialogOpen(false);
-                saveEvent({
-                  id: editingEvent ? editingEvent.id : undefined,
-                  title,
-                  date,
-                  startTime,
-                  endTime,
-                  description,
-                  location,
-                  category,
-                  repeat: {
-                    type: isRepeating ? repeatType : 'none',
-                    interval: repeatInterval,
-                    endDate: repeatEndDate || undefined,
-                  },
-                  notificationTime,
-                });
+                setDialogName('');
+                setOverlapEvents([]);
+                isEditing ? updateSchedule() : createSchedule();
               }}
               ml={3}
             >

@@ -10,11 +10,13 @@ export const CalendarController: React.FC<PropsType> = () => {
   return (
     <HStack mx="auto" justifyContent="space-between">
       <IconButton
+        data-testid="calendar-prev-btn"
         aria-label="Previous"
         icon={<ChevronLeftIcon />}
         onClick={() => navigate('prev')}
       />
       <Select
+        data-testid="calendar-view-button"
         aria-label="view"
         value={view}
         onChange={(e) => setView(e.target.value as 'week' | 'month')}
@@ -22,7 +24,12 @@ export const CalendarController: React.FC<PropsType> = () => {
         <option value="week">Week</option>
         <option value="month">Month</option>
       </Select>
-      <IconButton aria-label="Next" icon={<ChevronRightIcon />} onClick={() => navigate('next')} />
+      <IconButton
+        data-testid="calendar-next-btn"
+        aria-label="Next"
+        icon={<ChevronRightIcon />}
+        onClick={() => navigate('next')}
+      />
     </HStack>
   );
 };

@@ -10,6 +10,7 @@ export const RepeatCheckBox: React.FC = () => {
 
   return (
     <CheckBoxWithLabel
+      data-testid="schedule-repeat-setting"
       label="반복 설정"
       checkBoxLabel="반복 일정"
       isChecked={isRepeating}

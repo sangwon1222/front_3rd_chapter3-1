@@ -29,6 +29,7 @@ export const RepeatTimeSetting: React.FC = () => {
   return (
     <>
       <InputWithToolTipLabel
+        data-testid="schedule-start-time"
         type="time"
         label="시작 시간"
         value={startTime}
@@ -39,6 +40,7 @@ export const RepeatTimeSetting: React.FC = () => {
         isInvalid={Boolean(startTimeError)}
       />
       <InputWithToolTipLabel
+        data-testid="schedule-end-time"
         type="time"
         label="종료 시간"
         value={endTime}
@@ -47,6 +49,7 @@ export const RepeatTimeSetting: React.FC = () => {
         toolTipLabel={endTimeError}
         onBlur={() => handleValidation()}
         isInvalid={Boolean(endTimeError)}
+        placement="bottom"
       />
     </>
   );

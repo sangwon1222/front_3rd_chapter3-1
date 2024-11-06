@@ -10,6 +10,7 @@ export const RepeatTypeSetting: React.FC = () => {
   const setRepeat = useScheduleForm((state) => state.setRepeat);
   return (
     <SelectWithLabel
+      data-testid="schedule-repeat-type"
       label="반복 유형"
       value={type}
       onChange={(v) => setRepeat({ type: v as RepeatType })}
