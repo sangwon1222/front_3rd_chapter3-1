@@ -1,4 +1,5 @@
 import { useToast } from '@chakra-ui/react';
+import { debounce } from '@utils/debounce';
 import { useEffect, useState } from 'react';
 
 import { Event, EventForm } from '../types';
@@ -92,14 +93,14 @@ export const useEventOperations = (editing: boolean, onSave?: () => void) => {
     }
   };
 
-  async function init() {
+  const init = debounce(async () => {
     await fetchEvents();
     toast({
       title: '일정 로딩 완료!',
       status: 'info',
       duration: 1000,
     });
-  }
+  }, 100);
 
   useEffect(() => {
     init();
