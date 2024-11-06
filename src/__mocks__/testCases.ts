@@ -13,7 +13,7 @@ export const searchTestCase = [
   {
     target: '설명',
     search: '리뷰',
-    expected: [createEvent({ ...mockEvents[1] })],
+    expected: [createEvent({ ...mockEvents[1] }), createEvent({ ...mockEvents[3] })],
   },
   {
     target: '위치',
@@ -23,7 +23,11 @@ export const searchTestCase = [
   {
     target: '제목+위치',
     search: '회의',
-    expected: [createEvent({ ...mockEvents[0] }), createEvent({ ...mockEvents[1] })],
+    expected: [
+      createEvent({ ...mockEvents[0] }),
+      createEvent({ ...mockEvents[1] }),
+      createEvent({ ...mockEvents[3] }),
+    ],
   },
 ];
 

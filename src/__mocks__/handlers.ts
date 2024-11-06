@@ -35,7 +35,6 @@ export const handlers = [
     const updatedEvent = (await request.json()) as Event;
     const index = findEventIndexById(mockEvents, id as string);
     if (index === -1) return notFound();
-
     mockEvents[index] = { ...mockEvents[index], ...updatedEvent };
 
     return HttpResponse.json(mockEvents[index]);

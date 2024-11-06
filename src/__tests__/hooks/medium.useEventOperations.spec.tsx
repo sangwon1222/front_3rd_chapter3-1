@@ -7,21 +7,14 @@ import { useUpdateEvent } from '@hooks/events/useUpdateEvent.ts';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { CalendarManager } from '@templates/CalenderManager.tsx';
 import { act, renderHook, waitFor } from '@testing-library/react';
-import { setupServer } from 'msw/node';
 import React from 'react';
 
 import { createTestQueryClient } from '../../__mocks__/createTestQueryClient.tsx';
 import { createEvent } from '../../__mocks__/Factory.ts';
-import { setupMockHandlers } from '../../__mocks__/handlersUtils.ts';
 import { events } from '../../__mocks__/response/events.json' assert { type: 'json' };
 import { Event, EventForm } from '../../types.ts';
 
 const initialEvents = [...events] as const;
-
-const server = setupServer();
-beforeAll(() => server.listen());
-afterEach(() => server.resetHandlers());
-afterAll(() => server.close());
 
 let toastCalls: any[] = [];
 
@@ -50,10 +43,14 @@ const createWrapper =
   };
 
 describe('초기값 세팅', () => {
-  let fetchResult: { current: ReturnType<typeof useFetchEvents> };
-  let updateResult: { current: ReturnType<typeof useUpdateEvent> };
-  let createResult: { current: ReturnType<typeof useCreateEvent> };
-  let deleteResult: { current: ReturnType<typeof useDeleteEvent> };
+  let queryEvent: {
+    current: {
+      fetchEvents: ReturnType<typeof useFetchEvents>;
+      updateEvent: ReturnType<typeof useUpdateEvent>;
+      createEvent: ReturnType<typeof useCreateEvent>;
+      deleteEvent: ReturnType<typeof useDeleteEvent>;
+    };
+  };
 
   const toast = useToast();
   const queryClient = createTestQueryClient(toast);
@@ -61,31 +58,41 @@ describe('초기값 세팅', () => {
 
   beforeEach(async () => {
     // GIVEN: 각 테스트마다 초기 상태가 반영된 핸들러 설정
-    server.use(...setupMockHandlers([...initialEvents] as Event[]));
     toastCalls = [];
     queryClient.clear();
 
     // GIVEN: 초기상태 불러오기
-    fetchResult = renderHook(() => useFetchEvents(), { wrapper }).result;
-    updateResult = renderHook(() => useUpdateEvent(), { wrapper }).result;
-    createResult = renderHook(() => useCreateEvent(), { wrapper }).result;
-    deleteResult = renderHook(() => useDeleteEvent(), { wrapper }).result;
+    queryEvent = renderHook(
+      () => ({
+        fetchEvents: useFetchEvents(),
+        createEvent: useCreateEvent(),
+        updateEvent: useUpdateEvent(),
+        deleteEvent: useDeleteEvent(),
+      }),
+      { wrapper }
+    ).result;
   });
 
   describe('fetch 초기 상태', () => {
     it('저장되어있는 초기 이벤트 데이터를 적절하게 불러온다', async () => {
       // GIVEN: 데이터 불러오기
-      await waitFor(() => expect(fetchResult.current.events).toHaveLength(initialEvents.length));
+      await waitFor(() =>
+        expect(queryEvent.current.fetchEvents.events).toHaveLength(initialEvents.length)
+      );
 
       // THEN: 적확한 초기 이벤트 데이터가 설정되어야 한다.
-      initialEvents.forEach((event) => expect(fetchResult.current.events).toContainEqual(event));
+      initialEvents.forEach((event) =>
+        expect(queryEvent.current.fetchEvents.events).toContainEqual(event)
+      );
     });
   });
 
   describe('update event', () => {
     it('정의된 이벤트 정보를 기준으로 적절하게 저장이 된다', async () => {
       // GIVEN: 데이터 불러오기
-      await waitFor(() => expect(fetchResult.current.events).toHaveLength(initialEvents.length));
+      await waitFor(() =>
+        expect(queryEvent.current.fetchEvents.events).toHaveLength(initialEvents.length)
+      );
       // GIVEN: 새롭게 정의된 이벤트 가공
       const mockUpdateEvent = createEvent({
         id: '1',
@@ -97,11 +104,11 @@ describe('초기값 세팅', () => {
       }) as Event;
 
       // WHEN: 새롭게 정의된 이벤트를 저장했을 때
-      act(() => updateResult.current.updateEvent(mockUpdateEvent));
+      act(() => queryEvent.current.updateEvent.updateEvent(mockUpdateEvent));
 
       // THEN: 새롭게 정의된 이벤트를 불러와야 한다.
       await waitFor(() => {
-        const eventsData = fetchResult.current.events;
+        const eventsData = queryEvent.current.fetchEvents.events;
         expect(eventsData).toContainEqual(mockUpdateEvent);
       });
     });
@@ -110,7 +117,9 @@ describe('초기값 세팅', () => {
   describe('create event', () => {
     it("새로 정의된 'title', 'endTime' 기준으로 적절하게 일정이 업데이트 된다", async () => {
       // GIVEN: 데이터 불러오기
-      await waitFor(() => expect(fetchResult.current.events).toHaveLength(initialEvents.length));
+      await waitFor(() =>
+        expect(queryEvent.current.fetchEvents.events).toHaveLength(initialEvents.length)
+      );
       // GIVEN: 새로 정의된 데이터 가공
       const mockCreateEvent = {
         title: 'test-title',
@@ -125,11 +134,11 @@ describe('초기값 세팅', () => {
       } as EventForm;
 
       // WHEN: 새로 정의된 데이터를 업데이트 했을때
-      act(() => createResult.current.createEvent(mockCreateEvent));
+      act(() => queryEvent.current.createEvent.createEvent(mockCreateEvent));
 
       // THEN: 새로 정의된 데이터를 불러와야 한다.
       await waitFor(() => {
-        const eventsData = fetchResult.current.events;
+        const eventsData = queryEvent.current.fetchEvents.events;
         const expectedNewEvent = { id: String(initialEvents.length + 1), ...mockCreateEvent };
         expect(eventsData).toContainEqual(expectedNewEvent);
       });
@@ -139,24 +148,30 @@ describe('초기값 세팅', () => {
   describe('delete event', () => {
     it('존재하는 이벤트 삭제 시 에러없이 아이템이 삭제된다.', async () => {
       // GIVEN: 데이터 불러오기
-      await waitFor(() => expect(fetchResult.current.events).toHaveLength(initialEvents.length));
-      initialEvents.forEach((event) => expect(fetchResult.current.events).toContainEqual(event));
+      await waitFor(() =>
+        expect(queryEvent.current.fetchEvents.events).toHaveLength(initialEvents.length)
+      );
+      initialEvents.forEach((event) =>
+        expect(queryEvent.current.fetchEvents.events).toContainEqual(event)
+      );
 
       // WHEN: 데이터를 삭제 했을 때
-      act(() => deleteResult.current.deleteEvent('1'));
+      act(() => queryEvent.current.deleteEvent.deleteEvent('1'));
 
       // THEN: 삭제된 데이터는 이벤트 목록에 존재하지 않는다.
       await waitFor(() => {
-        const eventsData = fetchResult.current.events;
+        const eventsData = queryEvent.current.fetchEvents.events;
         expect(eventsData).toHaveLength(initialEvents.length - 1);
-        expect(fetchResult.current.events).not.toContainEqual({ ...initialEvents[0] });
+        expect(queryEvent.current.fetchEvents.events).not.toContainEqual({ ...initialEvents[0] });
       });
     });
   });
 
   it("존재하지 않는 이벤트 수정 시 '일정 저장 실패'라는 토스트가 노출되며 에러 처리가 되어야 한다", async () => {
     // GIVEN: 데이터 불러오기
-    await waitFor(() => expect(fetchResult.current.events).toHaveLength(initialEvents.length));
+    await waitFor(() =>
+      expect(queryEvent.current.fetchEvents.events).toHaveLength(initialEvents.length)
+    );
     const mockNotFoundEvent = {
       id: 'test-mock-event-id',
       title: 'test',
@@ -171,7 +186,7 @@ describe('초기값 세팅', () => {
     } as Event;
 
     // WHEN: 존재하지 않는 이벤트 수정했을 때
-    act(() => updateResult.current.updateEvent({ ...mockNotFoundEvent }));
+    act(() => queryEvent.current.updateEvent.updateEvent({ ...mockNotFoundEvent }));
     await waitFor(() => expect(toastCalls.length).toBeGreaterThan(0));
 
     // THEN: 일정 저장 실패 토스트 노출, 에러 처리가 되어야 한다.
@@ -181,12 +196,14 @@ describe('초기값 세팅', () => {
       duration: 3000,
       isClosable: true,
     });
-    expect(fetchResult.current.events).not.toStrictEqual(mockNotFoundEvent);
+    expect(queryEvent.current.fetchEvents.events).not.toStrictEqual(mockNotFoundEvent);
   });
 });
 
 describe('api 에러 반환', () => {
-  let fetchResult: { current: ReturnType<typeof useFetchEvents> };
+  let fetchEvents: {
+    current: ReturnType<typeof useFetchEvents>;
+  };
 
   const toast = useToast();
   const queryClient = createTestQueryClient(toast);
@@ -194,7 +211,6 @@ describe('api 에러 반환', () => {
 
   beforeEach(() => {
     // GIVEN: 각 테스트마다 초기 상태가 반영된 핸들러 설정
-    server.use(...setupMockHandlers([...initialEvents] as Event[]));
     toastCalls = [];
     queryClient.clear();
   });
@@ -205,9 +221,9 @@ describe('api 에러 반환', () => {
     vi.spyOn(fetchJsonModule, 'fetchJson').mockRejectedValue(new Error('이벤트 로딩 실패'));
 
     // WHEN: fetch 시도, 이벤트 로딩 실패했을 때
-    fetchResult = renderHook(() => useFetchEvents(), { wrapper }).result;
+    fetchEvents = renderHook(() => useFetchEvents(), { wrapper }).result;
     await waitFor(() => {
-      expect(fetchResult.current.error?.message).toBe('이벤트 로딩 실패');
+      expect(fetchEvents.current.error?.message).toBe('이벤트 로딩 실패');
     });
 
     // THEN: 에러 텍스트 및 토스트가 표시되어 있어야 한다.

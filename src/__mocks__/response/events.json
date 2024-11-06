@@ -35,6 +35,18 @@
       "category": "개인",
       "repeat": { "type": "none", "interval": 0 },
       "notificationTime": 10
+    },
+    {
+      "id": "4",
+      "title": "팀 회의",
+      "date": "2024-10-24",
+      "startTime": "14:00",
+      "endTime": "15:00",
+      "description": "리뷰",
+      "location": "회의실 D",
+      "category": "업무",
+      "repeat": { "type": "none", "interval": 0 },
+      "notificationTime": 10
     }
   ]
 }

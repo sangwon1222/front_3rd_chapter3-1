@@ -9,6 +9,9 @@ import { events } from '../../__mocks__/response/events.json' assert { type: 'js
 import { searchTestCase, viewEventTestCase } from '../../__mocks__/testCases.ts';
 import { useSearch } from '../../hooks/useSearch.ts';
 
+import { Event } from '@/types.ts';
+
+const initialEvents = [...events] as const;
 const queryClient = new QueryClient();
 
 const wrapper = ({ children }: { children: React.ReactNode }) => (
@@ -19,7 +22,7 @@ describe('초기값 세팅', () => {
   let result: { current: ReturnType<typeof useSearch> };
 
   beforeEach(() => {
-    queryClient.setQueryData(['events'], [...events]);
+    queryClient.setQueryData(['events'], [...initialEvents]);
     useCalendarViewStore.setState({ currentDate: new Date() });
     // GIVEN: useSearch 초기상태 세팅
     result = renderHook(() => useSearch(), { wrapper }).result;
@@ -39,7 +42,7 @@ describe('초기값 세팅', () => {
 
       //  THEN: 초기값 확인
       expect(result.current.searchTerm).toBe('');
-      expect(result.current.events).toHaveLength(3);
+      expect(result.current.events).toHaveLength(initialEvents.length);
       expect(result.current.filteredEvents).toEqual(result.current.events);
     });
   });
@@ -48,10 +51,14 @@ describe('초기값 세팅', () => {
     it('검색어에 맞는 이벤트만 필터링해야 한다', async () => {
       // WHEN: 검색어 입력했을 때
       act(() => result.current.setSearchTerm('회의'));
-      await waitFor(() => expect(result.current.filteredEvents).toHaveLength(2));
+      await waitFor(() => expect(result.current.filteredEvents).toHaveLength(3));
 
       // THEN 검색어에 맞는 이벤트만 필터링 되어야 한다.
-      expect(result.current.filteredEvents).toEqual([{ ...events[0] }, { ...events[1] }]);
+      expect(result.current.filteredEvents).toEqual([
+        { ...events[0] },
+        { ...events[1] },
+        { ...events[3] },
+      ]);
     });
 
     test.each(searchTestCase)(
@@ -89,18 +96,7 @@ describe('초기값 세팅', () => {
 
       expect(result.current.filteredEvents).toHaveLength(1);
       expect(result.current.filteredEvents).toEqual([
-        createEvent({
-          id: '3',
-          title: '점심 약속',
-          date: '2024-10-01',
-          startTime: '19:00',
-          endTime: '22:00',
-          description: '스시 예약',
-          location: '식당 A',
-          category: '개인',
-          repeat: { type: 'none', interval: 0 },
-          notificationTime: 30,
-        }),
+        createEvent({ ...(initialEvents[2] as Event) }),
       ]);
     });
   });

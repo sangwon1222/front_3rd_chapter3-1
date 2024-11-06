@@ -9,7 +9,7 @@ export const createEvent = (overrides: Partial<Event> = {}): Event | EventForm =
   description: '기본 설명',
   location: '기본 위치',
   category: '업무',
-  repeat: { type: 'none', interval: 0 },
+  repeat: { type: 'none', interval: 0, endDate: '' },
   notificationTime: 10,
   ...overrides,
 });

@@ -21,13 +21,24 @@ describe('getDaysInMonth', () => {
     expect(getDaysInMonth(2024, 4)).toBe(30);
   });
 
+  test.each(new Array(10).fill(0).map((_, i) => (i + 1) * 400))(
+    '윤년의 2월에 대해 29일을 반환한다',
+    (year) => {
+      expect(year % 400).toBe(0);
+      expect(getDaysInMonth(year, 2)).toBe(29);
+    }
+  );
+
   it('윤년의 2월에 대해 29일을 반환한다', () => {
     expect(getDaysInMonth(2024, 2)).toBe(29);
   });
 
-  it('평년의 2월에 대해 28일을 반환한다', () => {
-    expect(getDaysInMonth(401, 2)).toBe(28);
-  });
+  test.each(new Array(10).fill(0).map((_, i) => (i + 1) * 400 + 1))(
+    '평년의 2월에 대해 28일을 반환한다',
+    (year) => {
+      expect(getDaysInMonth(year, 2)).toBe(28);
+    }
+  );
 
   it('유효하지 않은 월에 대해 적절히 처리한다', () => {
     expect(getDaysInMonth(2024, 24)).toBe(0);
