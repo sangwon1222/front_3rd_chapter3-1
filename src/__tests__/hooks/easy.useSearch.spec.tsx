@@ -11,18 +11,18 @@ import { useSearch } from '../../hooks/useSearch.ts';
 
 import { Event } from '@/types.ts';
 
-const initialEvents = [...events] as const;
+const MOCK_EVENTS = [...events] as const;
 const queryClient = new QueryClient();
 
 const wrapper = ({ children }: { children: React.ReactNode }) => (
   <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
 );
 
-describe('초기값 세팅', () => {
+describe('-', () => {
   let result: { current: ReturnType<typeof useSearch> };
 
   beforeEach(() => {
-    queryClient.setQueryData(['events'], [...initialEvents]);
+    queryClient.setQueryData(['events'], [...MOCK_EVENTS]);
     useCalendarViewStore.setState({ currentDate: new Date() });
     // GIVEN: useSearch 초기상태 세팅
     result = renderHook(() => useSearch(), { wrapper }).result;
@@ -41,9 +41,10 @@ describe('초기값 세팅', () => {
       });
 
       //  THEN: 초기값 확인
-      expect(result.current.searchTerm).toBe('');
-      expect(result.current.events).toHaveLength(initialEvents.length);
-      expect(result.current.filteredEvents).toEqual(result.current.events);
+      const { searchTerm, events, filteredEvents } = result.current;
+      expect(searchTerm).toBe('');
+      expect(events).toHaveLength(MOCK_EVENTS.length);
+      expect(filteredEvents).toEqual(result.current.events);
     });
   });
 
@@ -55,9 +56,9 @@ describe('초기값 세팅', () => {
 
       // THEN 검색어에 맞는 이벤트만 필터링 되어야 한다.
       expect(result.current.filteredEvents).toEqual([
-        { ...events[0] },
-        { ...events[1] },
-        { ...events[3] },
+        { ...MOCK_EVENTS[0] },
+        { ...MOCK_EVENTS[1] },
+        { ...MOCK_EVENTS[3] },
       ]);
     });
 
@@ -96,7 +97,7 @@ describe('초기값 세팅', () => {
 
       expect(result.current.filteredEvents).toHaveLength(1);
       expect(result.current.filteredEvents).toEqual([
-        createEvent({ ...(initialEvents[2] as Event) }),
+        createEvent({ ...(MOCK_EVENTS[2] as Event) }),
       ]);
     });
   });

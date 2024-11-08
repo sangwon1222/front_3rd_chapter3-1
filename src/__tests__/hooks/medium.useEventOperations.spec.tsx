@@ -14,7 +14,7 @@ import { createEvent } from '../../__mocks__/Factory.ts';
 import { events } from '../../__mocks__/response/events.json' assert { type: 'json' };
 import { Event, EventForm } from '../../types.ts';
 
-const initialEvents = [...events] as const;
+const MOCK_EVENTS = [...events] as const;
 
 let toastCalls: any[] = [];
 
@@ -77,11 +77,11 @@ describe('초기값 세팅', () => {
     it('저장되어있는 초기 이벤트 데이터를 적절하게 불러온다', async () => {
       // GIVEN: 데이터 불러오기
       await waitFor(() =>
-        expect(queryEvent.current.fetchEvents.events).toHaveLength(initialEvents.length)
+        expect(queryEvent.current.fetchEvents.events).toHaveLength(MOCK_EVENTS.length)
       );
 
       // THEN: 적확한 초기 이벤트 데이터가 설정되어야 한다.
-      initialEvents.forEach((event) =>
+      MOCK_EVENTS.forEach((event) =>
         expect(queryEvent.current.fetchEvents.events).toContainEqual(event)
       );
     });
@@ -91,7 +91,7 @@ describe('초기값 세팅', () => {
     it('정의된 이벤트 정보를 기준으로 적절하게 저장이 된다', async () => {
       // GIVEN: 데이터 불러오기
       await waitFor(() =>
-        expect(queryEvent.current.fetchEvents.events).toHaveLength(initialEvents.length)
+        expect(queryEvent.current.fetchEvents.events).toHaveLength(MOCK_EVENTS.length)
       );
       // GIVEN: 새롭게 정의된 이벤트 가공
       const mockUpdateEvent = createEvent({
@@ -118,7 +118,7 @@ describe('초기값 세팅', () => {
     it("새로 정의된 'title', 'endTime' 기준으로 적절하게 일정이 업데이트 된다", async () => {
       // GIVEN: 데이터 불러오기
       await waitFor(() =>
-        expect(queryEvent.current.fetchEvents.events).toHaveLength(initialEvents.length)
+        expect(queryEvent.current.fetchEvents.events).toHaveLength(MOCK_EVENTS.length)
       );
       // GIVEN: 새로 정의된 데이터 가공
       const mockCreateEvent = {
@@ -139,7 +139,7 @@ describe('초기값 세팅', () => {
       // THEN: 새로 정의된 데이터를 불러와야 한다.
       await waitFor(() => {
         const eventsData = queryEvent.current.fetchEvents.events;
-        const expectedNewEvent = { id: String(initialEvents.length + 1), ...mockCreateEvent };
+        const expectedNewEvent = { id: String(MOCK_EVENTS.length + 1), ...mockCreateEvent };
         expect(eventsData).toContainEqual(expectedNewEvent);
       });
     });
@@ -149,9 +149,9 @@ describe('초기값 세팅', () => {
     it('존재하는 이벤트 삭제 시 에러없이 아이템이 삭제된다.', async () => {
       // GIVEN: 데이터 불러오기
       await waitFor(() =>
-        expect(queryEvent.current.fetchEvents.events).toHaveLength(initialEvents.length)
+        expect(queryEvent.current.fetchEvents.events).toHaveLength(MOCK_EVENTS.length)
       );
-      initialEvents.forEach((event) =>
+      MOCK_EVENTS.forEach((event) =>
         expect(queryEvent.current.fetchEvents.events).toContainEqual(event)
       );
 
@@ -161,8 +161,8 @@ describe('초기값 세팅', () => {
       // THEN: 삭제된 데이터는 이벤트 목록에 존재하지 않는다.
       await waitFor(() => {
         const eventsData = queryEvent.current.fetchEvents.events;
-        expect(eventsData).toHaveLength(initialEvents.length - 1);
-        expect(queryEvent.current.fetchEvents.events).not.toContainEqual({ ...initialEvents[0] });
+        expect(eventsData).toHaveLength(MOCK_EVENTS.length - 1);
+        expect(queryEvent.current.fetchEvents.events).not.toContainEqual({ ...MOCK_EVENTS[0] });
       });
     });
   });
@@ -170,9 +170,9 @@ describe('초기값 세팅', () => {
   it("존재하지 않는 이벤트 수정 시 '일정 저장 실패'라는 토스트가 노출되며 에러 처리가 되어야 한다", async () => {
     // GIVEN: 데이터 불러오기
     await waitFor(() =>
-      expect(queryEvent.current.fetchEvents.events).toHaveLength(initialEvents.length)
+      expect(queryEvent.current.fetchEvents.events).toHaveLength(MOCK_EVENTS.length)
     );
-    const mockNotFoundEvent = {
+    const NOT_FOUND_EVENT = {
       id: 'test-mock-event-id',
       title: 'test',
       date: '',
@@ -186,7 +186,7 @@ describe('초기값 세팅', () => {
     } as Event;
 
     // WHEN: 존재하지 않는 이벤트 수정했을 때
-    act(() => queryEvent.current.updateEvent.updateEvent({ ...mockNotFoundEvent }));
+    act(() => queryEvent.current.updateEvent.updateEvent({ ...NOT_FOUND_EVENT }));
     await waitFor(() => expect(toastCalls.length).toBeGreaterThan(0));
 
     // THEN: 일정 저장 실패 토스트 노출, 에러 처리가 되어야 한다.
@@ -196,7 +196,7 @@ describe('초기값 세팅', () => {
       duration: 3000,
       isClosable: true,
     });
-    expect(queryEvent.current.fetchEvents.events).not.toStrictEqual(mockNotFoundEvent);
+    expect(queryEvent.current.fetchEvents.events).not.toStrictEqual(NOT_FOUND_EVENT);
   });
 });
 

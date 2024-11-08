@@ -1,7 +1,7 @@
 import { fetchHolidays } from '@services/fetchHolidays';
 import { fillZero } from '@utils/dateUtils';
 
-const expectedHolidays = {
+const EXPECTED_HOLIDAYS = {
   '01': { '2024-01-01': '신정' },
   '02': {
     '2024-02-09': '설날',
@@ -47,7 +47,7 @@ describe('fetchHolidays', () => {
       const date = new Date(`2024-${month}-01`);
       const holidays = fetchHolidays(date);
       const formatMonth = String(fillZero(month));
-      expect(holidays).toEqual(expectedHolidays[formatMonth]);
+      expect(holidays).toEqual(EXPECTED_HOLIDAYS[formatMonth]);
     }
   );
 });
