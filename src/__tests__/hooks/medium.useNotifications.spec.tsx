@@ -3,10 +3,11 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import React from 'react';
 
-import { createTestQueryClient } from '../../__mocks__/createTestQueryClient.tsx';
 import { createEvent } from '../../__mocks__/Factory.ts';
 import { useNotifications } from '../../hooks/useNotifications.ts';
 import { Event } from '../../types.ts';
+
+import { createQueryClient } from '@/createQueryClient.ts';
 
 let toastCalls: any[] = [];
 
@@ -34,7 +35,7 @@ const createWrapper =
 describe('-', () => {
   let notificationResult: { current: ReturnType<typeof useNotifications> };
   const toast = useToast();
-  const queryClient = createTestQueryClient(toast);
+  const queryClient = createQueryClient(toast);
 
   beforeEach(async () => {
     // GIVEN: 각 테스트마다 초기 상태가 반영된 핸들러 설정
@@ -69,16 +70,17 @@ describe('-', () => {
     // WHEN: 알림 충족하는 시간이 되었을 때
     vi.advanceTimersByTime(1000 * 60 * 50);
 
-    // THEN: 알림이 하나 추가 되어있어야 한다.
-    await waitFor(() =>
+    await waitFor(() => {
+      // THEN: 알림이 하나 추가 되어있어야 한다.
       expect(notificationResult.current.notifications).toEqual([
         {
           id: MOCK_EVENT.id,
           message: `${MOCK_EVENT.notificationTime}분 후 ${MOCK_EVENT.title} 일정이 시작됩니다.`,
         },
-      ])
-    );
-    await waitFor(() => expect(notificationResult.current.notifications).toHaveLength(1));
+      ]);
+      // THEN: 알림이 하나만 있어야한다.
+      expect(notificationResult.current.notifications).toHaveLength(1);
+    });
   });
 
   it('index를 기준으로 알림을 적절하게 제거할 수 있다', async () => {
@@ -113,20 +115,23 @@ describe('-', () => {
     // WHEN: 첫번째 알림을 지웠을 때
     notificationResult.current.deleteNotification(0);
 
-    // THEN: 첫번째 알림 정보가 없어야 한다.
-    await waitFor(() => expect(notificationResult.current.notifications).toHaveLength(1));
-    expect(notificationResult.current.notifications).not.toStrictEqual({
-      id: MOCK_EVENT_1.id,
-      message: `${MOCK_EVENT_1.notificationTime}분 후 ${MOCK_EVENT_1.title} 일정이 시작됩니다.`,
-    });
+    await waitFor(() => {
+      // THEN: 첫번째 알림 정보가 없어야 한다.
+      expect(notificationResult.current.notifications).not.toStrictEqual({
+        id: MOCK_EVENT_1.id,
+        message: `${MOCK_EVENT_1.notificationTime}분 후 ${MOCK_EVENT_1.title} 일정이 시작됩니다.`,
+      });
 
-    // THEN: 두번째 알림 정보만 존재해야 한다.
-    expect(notificationResult.current.notifications).toEqual([
-      {
-        id: MOCK_EVENT_2.id,
-        message: `${MOCK_EVENT_2.notificationTime}분 후 ${MOCK_EVENT_2.title} 일정이 시작됩니다.`,
-      },
-    ]);
+      expect(notificationResult.current.notifications).toHaveLength(1);
+
+      // THEN: 두번째 알림 정보만 존재해야 한다.
+      expect(notificationResult.current.notifications).toEqual([
+        {
+          id: MOCK_EVENT_2.id,
+          message: `${MOCK_EVENT_2.notificationTime}분 후 ${MOCK_EVENT_2.title} 일정이 시작됩니다.`,
+        },
+      ]);
+    });
   });
 
   it('이미 알림이 발생한 이벤트에 대해서는 중복 알림이 발생하지 않아야 한다', async () => {

@@ -3,20 +3,23 @@ import { HStack, IconButton, Select } from '@chakra-ui/react';
 import { useCalendarView } from '@hooks/useCalendarView';
 import React from 'react';
 
+import { TEST_ID } from '@/constants/testID';
+
 type PropsType = {};
 
 export const CalendarController: React.FC<PropsType> = () => {
   const { navigate, view, setView } = useCalendarView();
+
   return (
     <HStack mx="auto" justifyContent="space-between">
       <IconButton
-        data-testid="calendar-prev-btn"
+        data-testid={TEST_ID.PREV}
         aria-label="Previous"
         icon={<ChevronLeftIcon />}
         onClick={() => navigate('prev')}
       />
       <Select
-        data-testid="calendar-view-button"
+        data-testid={TEST_ID.VIEW}
         aria-label="view"
         value={view}
         onChange={(e) => setView(e.target.value as 'week' | 'month')}
@@ -25,11 +28,12 @@ export const CalendarController: React.FC<PropsType> = () => {
         <option value="month">Month</option>
       </Select>
       <IconButton
-        data-testid="calendar-next-btn"
+        data-testid={TEST_ID.NEXT}
         aria-label="Next"
         icon={<ChevronRightIcon />}
         onClick={() => navigate('next')}
       />
+      {view}
     </HStack>
   );
 };

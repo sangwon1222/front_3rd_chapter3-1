@@ -1,12 +1,14 @@
 import { Heading, VStack } from '@chakra-ui/react';
-import { useFetchEvents } from '@hooks/events/useFetchEvents';
 import React from 'react';
 
 import { Calendar } from './Calendar';
 import { CalendarController } from './CalendarController';
 
+import { useEventOperations } from '@/hooks/useEventOperations';
+
 export const CalendarManager: React.FC = () => {
-  const { isLoading, error } = useFetchEvents();
+  const { fetch } = useEventOperations();
+  const { isLoading, error } = fetch;
 
   if (error) {
     return <div>{error.message}</div>;
@@ -14,7 +16,7 @@ export const CalendarManager: React.FC = () => {
 
   if (isLoading) return <div>loading...</div>;
   return (
-    <VStack flex={1} spacing={5} align="stretch" data-testid="calender">
+    <VStack flex={1} spacing={5} align="stretch">
       <Heading>일정 보기</Heading>
       {/* week / month 컨트롤 */}
       <CalendarController />

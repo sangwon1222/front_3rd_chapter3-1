@@ -1,5 +1,4 @@
 import { Text } from '@chakra-ui/react';
-import { useDeleteEvent } from '@hooks/events/useDeleteEvent';
 import { useNotifications } from '@hooks/useNotifications';
 import { useSearch } from '@hooks/useSearch';
 import useScheduleForm from '@stores/useScheduleForm';
@@ -7,11 +6,13 @@ import { Schedule } from '@templates/Schedule';
 import { useCallback } from 'react';
 import { Event } from 'src/types';
 
+import { useEventOperations } from '@/hooks/useEventOperations';
+
 export const FilteredEvents = () => {
   const { filteredEvents } = useSearch();
   const { notifiedEvents } = useNotifications();
 
-  const { deleteEvent } = useDeleteEvent();
+  const { deleted } = useEventOperations();
   const setForm = useScheduleForm((state) => state.setForm);
 
   const setEditingForm = useCallback((event: Event) => setForm(event), [setForm]);
@@ -27,7 +28,7 @@ export const FilteredEvents = () => {
               event={event}
               notifiedEvents={notifiedEvents}
               editEvent={setEditingForm}
-              deleteEvent={deleteEvent}
+              deleteEvent={deleted.deleteEvent}
             />
           </div>
         ))

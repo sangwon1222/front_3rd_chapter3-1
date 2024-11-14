@@ -1,11 +1,13 @@
-import { useFetchEvents } from '@hooks/events/useFetchEvents';
 import useCalendarViewStore from '@stores/useCalendarViewStore';
 import useSearchStore from '@stores/useSearchStore';
 import { getFilteredEvents } from '@utils/eventUtils';
 import { useMemo } from 'react';
 
+import { useEventOperations } from './useEventOperations';
+
 export const useSearch = () => {
-  const { events } = useFetchEvents();
+  const { fetch } = useEventOperations();
+  const { events } = fetch;
   const view = useCalendarViewStore((state) => state.view);
   const currentDate = useCalendarViewStore((state) => state.currentDate);
   const searchTerm = useSearchStore((state) => state.searchTerm);

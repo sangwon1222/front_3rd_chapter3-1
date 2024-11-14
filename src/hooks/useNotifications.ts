@@ -1,8 +1,9 @@
 import { useInterval } from '@chakra-ui/react';
-import { useFetchEvents } from '@hooks/events/useFetchEvents';
 import useNotificationStore, { NotificationType } from '@stores/useNotificationStore';
 import { getUpcomingEvents } from '@utils/notificationUtils';
 import { Event } from 'src/types';
+
+import { useEventOperations } from './useEventOperations';
 
 interface UseNotificationsResult {
   notifications: NotificationType[];
@@ -13,20 +14,19 @@ interface UseNotificationsResult {
 }
 
 export const useNotifications = (): UseNotificationsResult => {
-  const { events } = useFetchEvents();
+  const { fetch } = useEventOperations();
+  const { events } = fetch;
   const notifications = useNotificationStore((state) => state.notifications);
   const updateNotifications = useNotificationStore((state) => state.updateNotifications);
-  const dismissedNotifications = useNotificationStore((state) => state.dismissedNotifications);
   const deleteNotification = useNotificationStore((state) => state.deleteNotifications);
   const notifiedEvents = useNotificationStore((state) => state.notifiedEvents);
   const reset = useNotificationStore((state) => state.reset);
 
   const checkUpcomingEvents = () => {
     const now = new Date();
-    const upcomingEvents = getUpcomingEvents(events, now, notifiedEvents, dismissedNotifications);
+    const upcomingEvents = getUpcomingEvents(events, now, notifiedEvents);
 
     if (upcomingEvents.length === 0) return;
-
     updateNotifications(upcomingEvents);
   };
 
